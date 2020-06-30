@@ -1,0 +1,45 @@
+### Get the latest release for a GitHub repository
+@owner = meetupgemist
+@repo = meetupgemist.github.io
+
+@baseUrl = https://api.github.com
+
+@prstate=closed
+GET {{baseUrl}}/repos/{{owner}}/{{repo}}/pulls
+    ?state={{prstate}}
+
+
+###
+
+POST https://api.github.com/graphql
+Authorization: bearer 
+Content-Type: application/json
+X-REQUEST-TYPE: GraphQL
+
+{
+      repository(owner: "meetupgemist", name: "meetupgemist.github.io") {
+    pullRequests(orderBy: {field: CREATED_AT, direction: DESC}, 
+    states: MERGED, first: 5) {
+      edges {
+        node {
+          number
+          url
+          id
+          title
+          mergedAt
+          files(first: 1) {
+            nodes {
+              path
+              additions
+              deletions
+            }
+            pageInfo {
+              endCursor
+              startCursor
+            }
+          }
+        }
+      }
+    }
+  }
+}

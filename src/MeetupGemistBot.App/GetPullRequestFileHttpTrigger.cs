@@ -1,12 +1,9 @@
 using System;
-using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using System.Net.Http;
 using Octokit;
 using System.Text.RegularExpressions;
@@ -28,7 +25,7 @@ namespace MarcDuiker.MeetupGemistBot.App
 
             var contentBytes = await client.Repository.Content.GetRawContent("meetupgemist", "meetupgemist.github.io", path);
             var contentString = System.Text.Encoding.UTF8.GetString(contentBytes);
-            // Regex with two capture groups; one for the title and one for the YoutTubeID
+            // Regex with two capture groups; one for the title and one for the YouTubeID
             var pattern = $"^title:\\s(?<TITLE>.*)\\nyoutube_id:\\s(?<YOUTUBEID>.*)";
             var regex = new Regex(pattern, RegexOptions.Multiline);
             var match = regex.Match(contentString);

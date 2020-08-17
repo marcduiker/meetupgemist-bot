@@ -52,4 +52,4 @@ az functionapp create --name "meetup-gemist-fa"
                 --functions-version 3
                 --storage-account meetupgemiststor
                 --app-insights "meetup-gemist-ai"
-                --app-insights-key "9d320b82-890f-472d-ad1f-9c5d899ba6a6"
+                --app-insights-key ""

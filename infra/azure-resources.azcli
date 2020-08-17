@@ -1,0 +1,55 @@
+# 1 - Login
+az login
+
+# 2 - Create the resource group
+az group create --location westeurope
+                --name "meetup-gemist-rg"
+
+# 3 - Create the API Management service
+az apim create --name "meetup-gemist-apim"
+                -g "meetup-gemist-rg"
+                -l westeurope
+                --sku-name Consumption
+                --publisher-email ""
+                --publisher-name "MeetupGemistBot"
+
+# 4 - Create API in API Management
+az apim api create --service-name "meetup-gemist-apim"
+                    -g "meetup-gemist-rg" 
+                    --api-id "github"
+                    --path "/github" 
+                    --display-name "GitHub"
+                    --protocols https
+                    --subscription-required true
+                    --subscription-key-required true
+                    --subscription-key-query-param-name "xhubsignature"
+                    --subscription-key-header-name "X-Hub-Signature"
+
+# 5 - Add App Insights extension
+az extension add --name application-insights
+
+# 6 - Create App Insights instance
+az monitor app-insights component create --app "meetup-gemist-ai" 
+                --location westeurope 
+                --kind web 
+                -g "meetup-gemist-rg" 
+                --application-type web 
+                --retention-time 60
+                --query instrumentationKey
+
+# 7 - Storage account for Function App
+az storage account create -n meetupgemiststor 
+                -g "meetup-gemist-rg" 
+                -l westeurope
+                --sku Standard_LRS
+
+# 8 - Function App
+az functionapp create --name "meetup-gemist-fa"
+                --consumption-plan-location westeurope 
+                --os-type Linux 
+                --resource-group "meetup-gemist-rg" 
+                --runtime dotnet
+                --functions-version 3
+                --storage-account meetupgemiststor
+                --app-insights "meetup-gemist-ai"
+                --app-insights-key "9d320b82-890f-472d-ad1f-9c5d899ba6a6"
